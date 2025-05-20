@@ -1,9 +1,13 @@
 package utez.edu.mx.back.controller;
 
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import utez.edu.mx.back.dto.VehiculoDto;
+import utez.edu.mx.back.modelo.ApiResponse;
+import utez.edu.mx.back.service.VehiculoService;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("api/practica/vehiculo")
@@ -18,7 +22,7 @@ public class VehiculoController {
     }
 
     @DeleteMapping("/eliminar/{id}")
-    public ResponseEntity<ApiResponse> delete(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse> delete(@PathVariable UUID id) {
         return service.delete(id);
     }
 
@@ -28,7 +32,12 @@ public class VehiculoController {
     }
 
     @PutMapping("/actualizar/{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable Long id, @RequestBody VehiculoDto dto) {
+    public ResponseEntity<ApiResponse> update(@PathVariable UUID id, @RequestBody VehiculoDto dto) {
         return service.update(id, dto.toEntity());
+    }
+
+    @GetMapping("/mostrar/{id}")
+    public ResponseEntity<ApiResponse> getById(@PathVariable UUID id) {
+        return service.getById(id);
     }
 }
