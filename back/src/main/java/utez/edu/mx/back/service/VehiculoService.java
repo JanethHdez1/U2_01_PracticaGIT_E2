@@ -1,8 +1,16 @@
 package utez.edu.mx.back.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import utez.edu.mx.back.modelo.ApiResponse;
+import utez.edu.mx.back.modelo.bean.VehiculoBean;
+import utez.edu.mx.back.repository.VehiculoRepository;
+
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -18,7 +26,7 @@ public class VehiculoService {
         return new ResponseEntity<>(new ApiResponse(repository.saveAndFlush(vehiculo), HttpStatus.OK, false, "Vehículo registrado"), HttpStatus.OK);
     }
 
-    public ResponseEntity<ApiResponse> delete(Long id) {
+    public ResponseEntity<ApiResponse> delete(UUID id) {
         Optional<VehiculoBean> found = repository.findById(id);
         if (found.isPresent()) {
             repository.deleteById(id);
@@ -27,7 +35,7 @@ public class VehiculoService {
         return new ResponseEntity<>(new ApiResponse(HttpStatus.BAD_REQUEST, true, "Vehículo no encontrado"), HttpStatus.BAD_REQUEST);
     }
 
-    public ResponseEntity<ApiResponse> update(Long id, VehiculoBean nuevoVehiculo) {
+    public ResponseEntity<ApiResponse> update(UUID id, VehiculoBean nuevoVehiculo) {
         Optional<VehiculoBean> encontrado = repository.findById(id);
         if (encontrado.isPresent()) {
             VehiculoBean actual = encontrado.get();
@@ -52,4 +60,9 @@ public class VehiculoService {
         return new ResponseEntity<>(new ApiResponse(repository.findAll(), HttpStatus.OK), HttpStatus.OK);
     }
 
+    public ResponseEntity<ApiResponse> getById(UUID id) {
+        Optional<VehiculoBean> found = repository.findById(id);
+        return found.map(vehiculo -> new ResponseEntity<>(new ApiResponse(vehiculo, HttpStatus.OK), HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(new ApiResponse(HttpStatus.NOT_FOUND, true, "Vehículo no encontrado"), HttpStatus.NOT_FOUND));
+    }
 }
