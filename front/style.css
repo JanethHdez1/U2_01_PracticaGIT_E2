@@ -1,0 +1,17 @@
+v.card-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 1rem;
+    font-size: 1.2rem;
+}
+
+.card-buttons i {
+    cursor: pointer;
+    color: #555;
+    transition: color 0.2s ease;
+}
+
+.card-buttons i:hover {
+    color: #000;
+}
