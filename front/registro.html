@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Automóvil</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-title {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .required-label:after {
+            content: " *";
+            color: #dc3545;
+        }
+        
+        .color-option {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container">
+        <div class="form-container bg-white">
+            <h2 class="form-title">Registro de Automóvil</h2>
+            <form id="registroForm" class="needs-validation" novalidate>
+                <div class="mb-3">
+                    <label for="marca" class="form-label required-label">Marca</label>
+                    <input type="text" class="form-control" id="marca" required>
+                    <div class="invalid-feedback">
+                        Por favor ingresa la marca del automóvil
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="modelo" class="form-label required-label">Modelo</label>
+                    <input type="text" class="form-control" id="modelo" required>
+                    <div class="invalid-feedback">
+                        Por favor ingresa el modelo del automóvil
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="color" class="form-label required-label">Color</label>
+                    <select class="form-select" id="color" required>
+                        <option value="" selected disabled>Selecciona un color</option>
+                        <option value="Rojo">Rojo</option>
+                        <option value="Azul">Azul</option>
+                        <option value="Negro">Negro</option>
+                        <option value="Blanco">Blanco</option>
+                        <option value="Gris">Gris</option>
+                        <option value="Plateado">Plateado</option>
+                        <option value="Verde">Verde</option>
+                        <option value="Amarillo">Amarillo</option>
+                        <option value="Naranja">Naranja</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                    <div class="invalid-feedback">
+                        Por favor selecciona un color
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="placas" class="form-label required-label">Placas</label>
+                    <input type="text" class="form-control" id="placas" required 
+                           pattern="[A-Z0-9]{3,10}" 
+                           title="Las placas deben contener solo letras mayúsculas y números (3-10 caracteres)">
+                    <div class="invalid-feedback">
+                        Por favor ingresa las placas del automóvil (solo letras mayúsculas y números)
+                    </div>
+                    <small class="text-muted">Las placas deben ser únicas en el sistema</small>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="proveedor" class="form-label required-label">Nombre del Proveedor</label>
+                    <input type="text" class="form-control" id="proveedor" required>
+                    <div class="invalid-feedback">
+                        Por favor ingresa el nombre del proveedor
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <button class="btn btn-success btn-lg" type="submit">Registrar Automóvil</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+        // Validación del formulario
+        (function() {
+            'use strict';
+            
+            const form = document.getElementById('registroForm');
+            
+            form.addEventListener('submit', async function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                
+                if (!form.checkValidity()) {
+                    form.classList.add('was-validated');
+                    return;
+                }
+                
+                // Mostrar confirmación
+                const { isConfirmed } = await Swal.fire({
+                    title: 'Confirmar Registro',
+                    html: `
+                        <div class="text-start">
+                            <p><strong>Marca:</strong> ${document.getElementById('marca').value}</p>
+                            <p><strong>Modelo:</strong> ${document.getElementById('modelo').value}</p>
+                            <p><strong>Color:</strong> ${document.getElementById('color').value}</p>
+                            <p><strong>Placas:</strong> ${document.getElementById('placas').value}</p>
+                            <p><strong>Proveedor:</strong> ${document.getElementById('proveedor').value}</p>
+                        </div>
+                        <p class="mt-3">¿Deseas registrar este automóvil?</p>
+                    `,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, registrar',
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: '#198754',
+                    cancelButtonColor: '#dc3545'
+                });
+                
+                if (!isConfirmed) return;
+                
+                // Mostrar loading
+                Swal.fire({
+                    title: 'Registrando...',
+                    html: 'Por favor espera mientras procesamos tu solicitud',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                // Simular envío al servidor (reemplazar con tu API real)
+                try {
+                    const autoData = {
+                        marca: document.getElementById('marca').value,
+                        modelo: document.getElementById('modelo').value,
+                        color: document.getElementById('color').value,
+                        placas: document.getElementById('placas').value,
+                        proveedor: document.getElementById('proveedor').value
+                    };
+                    
+                    // Aquí iría tu fetch a la API de Spring Boot
+                    console.log('Datos a enviar:', autoData);
+                    
+                    // Simular respuesta del servidor
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    
+                    // Mostrar éxito
+                    await Swal.fire({
+                        title: '¡Registro Exitoso!',
+                        text: 'El automóvil ha sido registrado correctamente',
+                        icon: 'success',
+                        confirmButtonColor: '#198754'
+                    });
+                    
+                    // Resetear formulario
+                    form.reset();
+                    form.classList.remove('was-validated');
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    await Swal.fire({
+                        title: 'Error',
+                        text: 'Ocurrió un error al registrar el automóvil',
+                        icon: 'error',
+                        confirmButtonColor: '#dc3545'
+                    });
+                }
+            });
+        })();
+    </script>
+</body>
+</html>

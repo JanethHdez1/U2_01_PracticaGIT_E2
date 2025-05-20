@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edición de Automóvil</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-title {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .required-label:after {
+            content: " *";
+            color: #dc3545;
+        }
+        
+        .read-only {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container">
+        <div class="form-container bg-white">
+            <h2 class="form-title">Edición de Automóvil</h2>
+            <form id="edicionForm" class="needs-validation" novalidate>
+                <input type="hidden" id="id">
+                
+                <div class="mb-3">
+                    <label for="marca" class="form-label required-label">Marca</label>
+                    <input type="text" class="form-control" id="marca" required>
+                    <div class="invalid-feedback">
+                        Por favor ingresa la marca del automóvil
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="modelo" class="form-label required-label">Modelo</label>
+                    <input type="text" class="form-control" id="modelo" required>
+                    <div class="invalid-feedback">
+                        Por favor ingresa el modelo del automóvil
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="color" class="form-label required-label">Color</label>
+                    <select class="form-select" id="color" required>
+                        <option value="" disabled>Selecciona un color</option>
+                        <option value="Rojo">Rojo</option>
+                        <option value="Azul">Azul</option>
+                        <option value="Negro">Negro</option>
+                        <option value="Blanco">Blanco</option>
+                        <option value="Gris">Gris</option>
+                        <option value="Plateado">Plateado</option>
+                        <option value="Verde">Verde</option>
+                        <option value="Amarillo">Amarillo</option>
+                        <option value="Naranja">Naranja</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                    <div class="invalid-feedback">
+                        Por favor selecciona un color
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="placas" class="form-label">Placas</label>
+                    <input type="text" class="form-control read-only" id="placas" readonly>
+                    <small class="text-muted">Las placas no pueden modificarse</small>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="proveedor" class="form-label required-label">Nombre del Proveedor</label>
+                    <input type="text" class="form-control" id="proveedor" required>
+                    <div class="invalid-feedback">
+                        Por favor ingresa el nombre del proveedor
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary btn-lg" type="submit">Guardar Cambios</button>
+                    <button class="btn btn-outline-danger" type="button" id="cancelButton">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+        // Cargar datos del automóvil al iniciar
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Simular que obtenemos el ID de la URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const autoId = urlParams.get('id') || '1'; // Ejemplo con ID 1
+            
+            // Mostrar loading
+            Swal.fire({
+                title: 'Cargando...',
+                html: 'Por favor espera mientras cargamos los datos del automóvil',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            try {
+                // Aquí iría tu fetch a la API de Spring Boot para obtener los datos
+                // const response = await fetch(`http://tu-backend-springboot.com/api/autos/${autoId}`);
+                // const auto = await response.json();
+                
+                // Datos de ejemplo (simulando respuesta del servidor)
+                const auto = {
+                    id: autoId,
+                    marca: 'Toyota',
+                    modelo: 'Corolla',
+                    color: 'Blanco',
+                    placas: 'ABC123',
+                    proveedor: 'Proveedor Ejemplo S.A.'
+                };
+                
+                // Llenar formulario
+                document.getElementById('id').value = auto.id;
+                document.getElementById('marca').value = auto.marca;
+                document.getElementById('modelo').value = auto.modelo;
+                document.getElementById('color').value = auto.color;
+                document.getElementById('placas').value = auto.placas;
+                document.getElementById('proveedor').value = auto.proveedor;
+                
+                Swal.close();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                await Swal.fire({
+                    title: 'Error',
+                    text: 'No se pudieron cargar los datos del automóvil',
+                    icon: 'error',
+                    confirmButtonColor: '#dc3545'
+                });
+                window.location.href = 'lista-autos.html'; // Redirigir a la lista
+            }
+        });
+        
+        // Validación del formulario
+        (function() {
+            'use strict';
+            
+            const form = document.getElementById('edicionForm');
+            
+            form.addEventListener('submit', async function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                
+                if (!form.checkValidity()) {
+                    form.classList.add('was-validated');
+                    return;
+                }
+                
+                // Mostrar confirmación
+                const { isConfirmed } = await Swal.fire({
+                    title: 'Confirmar Cambios',
+                    html: `
+                        <div class="text-start">
+                            <p><strong>Marca:</strong> ${document.getElementById('marca').value}</p>
+                            <p><strong>Modelo:</strong> ${document.getElementById('modelo').value}</p>
+                            <p><strong>Color:</strong> ${document.getElementById('color').value}</p>
+                            <p><strong>Placas:</strong> ${document.getElementById('placas').value}</p>
+                            <p><strong>Proveedor:</strong> ${document.getElementById('proveedor').value}</p>
+                        </div>
+                        <p class="mt-3">¿Deseas guardar los cambios realizados?</p>
+                    `,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, guardar',
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: '#0d6efd',
+                    cancelButtonColor: '#dc3545'
+                });
+                
+                if (!isConfirmed) return;
+                
+                // Mostrar loading
+                Swal.fire({
+                    title: 'Guardando...',
+                    html: 'Por favor espera mientras actualizamos los datos',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                try {
+                    const autoData = {
+                        id: document.getElementById('id').value,
+                        marca: document.getElementById('marca').value,
+                        modelo: document.getElementById('modelo').value,
+                        color: document.getElementById('color').value,
+                        placas: document.getElementById('placas').value,
+                        proveedor: document.getElementById('proveedor').value
+                    };
+                    
+                    // Aquí iría tu fetch a la API de Spring Boot para actualizar
+                    // const response = await fetch(`http://tu-backend-springboot.com/api/autos/${autoData.id}`, {
+                    //     method: 'PUT',
+                    //     headers: { 'Content-Type': 'application/json' },
+                    //     body: JSON.stringify(autoData)
+                    // });
+                    
+                    // Simular respuesta del servidor
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    
+                    // Mostrar éxito
+                    await Swal.fire({
+                        title: '¡Actualización Exitosa!',
+                        text: 'Los datos del automóvil han sido actualizados',
+                        icon: 'success',
+                        confirmButtonColor: '#198754'
+                    });
+                    
+                    // Redirigir a la lista
+                    window.location.href = 'lista-autos.html';
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    await Swal.fire({
+                        title: 'Error',
+                        text: 'Ocurrió un error al actualizar los datos',
+                        icon: 'error',
+                        confirmButtonColor: '#dc3545'
+                    });
+                }
+            });
+            
+            // Manejar botón de cancelar
+            document.getElementById('cancelButton').addEventListener('click', async () => {
+                const { isConfirmed } = await Swal.fire({
+                    title: '¿Descartar cambios?',
+                    text: '¿Estás seguro de que deseas cancelar la edición? Los cambios no se guardarán',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, descartar',
+                    cancelButtonText: 'Continuar editando',
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d'
+                });
+                
+                if (isConfirmed) {
+                    window.location.href = 'lista-autos.html';
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
